@@ -11,7 +11,7 @@ from copy import deepcopy
 class CarOp:
     target_addr = '192.168.137.241'
     is_quit = False
-    img = np.zeros([100, 100, 3], np.uint8)
+    img = None
     delay = 0.1
 
     offline = True
@@ -199,6 +199,9 @@ if __name__ == '__main__':
 
     while True:
         key = cv2.waitKey(1000 // 30)
+        img = op.get_cam_img()
+        if img is None:
+            continue
         img = cv2.cvtColor(op.get_cam_img(), cv2.COLOR_RGB2BGR)
         cv2.imshow('viewer', img)
         time.sleep(0.01)

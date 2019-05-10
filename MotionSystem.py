@@ -93,20 +93,6 @@ class MotionSystem:
             self.motor_controller(2, self.status_back)
             self.motor_controller(3, self.status_back)
 
-    # def left(self):
-    #     if self.to_status(3):
-    #         self.motor_controller(0, self.status_back)
-    #         self.motor_controller(1, self.status_forward)
-    #         self.motor_controller(2, self.status_back)
-    #         self.motor_controller(3, self.status_forward)
-    #
-    # def right(self):
-    #     if self.to_status(4):
-    #         self.motor_controller(0, self.status_forward)
-    #         self.motor_controller(1, self.status_back)
-    #         self.motor_controller(2, self.status_forward)
-    #         self.motor_controller(3, self.status_back)
-
     def left(self):
         if self.to_status(3):
             self.motor_controller(0, self.status_forward, 0.1)
@@ -120,6 +106,20 @@ class MotionSystem:
             self.motor_controller(1, self.status_forward, 0.1)
             self.motor_controller(2, self.status_forward)
             self.motor_controller(3, self.status_forward, 0.1)
+
+    # def left(self):
+    #     if self.to_status(3):
+    #         self.motor_controller(0, self.status_back)
+    #         self.motor_controller(1, self.status_forward)
+    #         self.motor_controller(2, self.status_back)
+    #         self.motor_controller(3, self.status_forward)
+    #
+    # def right(self):
+    #     if self.to_status(4):
+    #         self.motor_controller(0, self.status_forward)
+    #         self.motor_controller(1, self.status_back)
+    #         self.motor_controller(2, self.status_forward)
+    #         self.motor_controller(3, self.status_back)
 
 
 if __name__ == '__main__':

@@ -181,6 +181,7 @@ class CarOpEr:
                     img2 = cv2.rotate(img2, cv2.ROTATE_180)
 
                     self.cam_img = np.concatenate([img1, img2], 1)
+                    # self.cam_img = cv2.resize(self.cam_img, (self.cam_img.shape[0]//2, self.cam_img.shape[1]//2), interpolation=cv2.INTER_AREA)
                 else:
                     msg = 'grab failure'
                     print(msg)

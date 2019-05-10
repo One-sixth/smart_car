@@ -25,8 +25,8 @@ class AutoNav:
 
     def nav_run(self):
         while not self.need_quit:
-            time.sleep(0.01)
-            if self.need_wait:
+            time.sleep(0.5)
+            if self.need_wait or self.car_op.offline:
                 time.sleep(1)
                 continue
 
@@ -40,37 +40,42 @@ class AutoNav:
                     self.car_op.move_stop()
                     if self.car_op.ultrasonic_radar_status[2]:
                         print('AutoNav: try rotate to right')
+                        self.car_op.move_back()
+                        time.sleep(1.)
                         self.car_op.move_right()
-                        time.sleep(0.5)
+                        time.sleep(1.)
                         self.car_op.move_stop()
                     elif self.car_op.ultrasonic_radar_status[0]:
                         print('AutoNav: found right blocked')
                         print('AutoNav: try rotate to left')
+                        self.car_op.move_back()
+                        time.sleep(1.)
                         self.car_op.move_left()
-                        time.sleep(0.5)
+                        time.sleep(1.)
                         self.car_op.move_stop()
                     else:
                         print('AutoNav: try move back')
                         self.car_op.move_back()
-                        self.car_op.move_right()
-                        time.sleep(0.5)
+                        time.sleep(1.)
 
             elif self.location == 'neighbor':
                 # 靠边停下
 
                 # 找到尽头
-                while not self.need_wait:
+                while not self.need_wait and not self.car_op.offline:
                     print('AutoNav: forwarding')
                     self.car_op.move_forward()
-                    time.sleep(0.01)
+                    time.sleep(0.5)
                     if not self.car_op.ultrasonic_radar_status[1]:
                         break
 
                 # 旋转直到车头无障碍物
-                while not self.need_wait:
+                while not self.need_wait and not self.car_op.offline:
                     print('AutoNav: forwarding')
+                    self.car_op.move_back()
+                    time.sleep(1.)
                     self.car_op.move_right()
-                    time.sleep(0.01)
+                    time.sleep(0.5)
                     if self.car_op.ultrasonic_radar_status[1]:
                         break
 

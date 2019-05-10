@@ -6,6 +6,7 @@ Copyright (c) 2015, 2016, 2017 MrTijn/Tijndagamer
 """
 
 import smbus
+import numpy as np
 
 class mpu6050:
 
@@ -52,6 +53,10 @@ class mpu6050:
 
     ACCEL_CONFIG = 0x1C
     GYRO_CONFIG = 0x1B
+
+    # 预校准偏置
+    accel_bias = [0, 0, 0]
+    gyro_bias = [0, 0, 0]
 
     def __init__(self, address, bus=1):
         self.address = address
@@ -125,7 +130,7 @@ class mpu6050:
             else:
                 return -1
 
-    def get_accel_data(self, g = False):
+    def get_accel_data(self, g=False, apply_bias=False):
         """Gets and returns the X, Y and Z values from the accelerometer.
         If g is True, it will return the data in g
         If g is False, it will return the data in m/s^2
@@ -153,6 +158,11 @@ class mpu6050:
         x = x / accel_scale_modifier
         y = y / accel_scale_modifier
         z = z / accel_scale_modifier
+
+        if apply_bias:
+            x = x - self.accel_bias[0]
+            y = y - self.accel_bias[1]
+            z = z - self.accel_bias[2]
 
         if g is True:
             return {'x': x, 'y': y, 'z': z}
@@ -196,7 +206,7 @@ class mpu6050:
             else:
                 return -1
 
-    def get_gyro_data(self):
+    def get_gyro_data(self, apply_bias=False):
         """Gets and returns the X, Y and Z values from the gyroscope.
         Returns the read values in a dictionary.
         """
@@ -223,6 +233,11 @@ class mpu6050:
         y = y / gyro_scale_modifier
         z = z / gyro_scale_modifier
 
+        if apply_bias:
+            x = x - self.gyro_bias[0]
+            y = y - self.gyro_bias[1]
+            z = z - self.gyro_bias[2]
+
         return {'x': x, 'y': y, 'z': z}
 
     def get_all_data(self):
@@ -233,18 +248,53 @@ class mpu6050:
 
         return [accel, gyro, temp]
 
+    def calc_bias(self, wait_time=10):
+        """
+        加速计有漂移问题，使用这个校准，减少影响
+        需要保持加速计静止
+        """
+        start_time = time.time()
+        accel_x = []
+        accel_y = []
+        accel_z = []
+        gyro_x = []
+        gyro_y = []
+        gyro_z = []
+
+        while time.time() - start_time > wait_time:
+            accel_data = self.get_accel_data(g=True, apply_bias=False)
+            gyro_data = self.get_gyro_data(apply_bias=False)
+
+            accel_x.append(accel_data['x'])
+            accel_y.append(accel_data['y'])
+            accel_z.append(accel_data['z'])
+
+            gyro_x.append(gyro_data['x'])
+            gyro_y.append(gyro_data['y'])
+            gyro_z.append(gyro_data['z'])
+
+        self.accel_bias[0] = float(np.mean(accel_x))
+        self.accel_bias[1] = float(np.mean(accel_y))
+        self.accel_bias[2] = float(np.mean(accel_z))
+
+        self.gyro_bias[0] = float(np.mean(gyro_x))
+        self.gyro_bias[1] = float(np.mean(gyro_y))
+        self.gyro_bias[2] = float(np.mean(gyro_z))
+
+
 if __name__ == "__main__":
     import time
     mpu = mpu6050(0x68)
-    mpu.set_accel_range(mpu.ACCEL_RANGE_8G)
+    mpu.set_accel_range(mpu.ACCEL_RANGE_2G)
+    mpu.calc_bias()
     x, y, z = 0, 0, 0
     while True:
         # print(mpu.get_temp())
-        accel_data = mpu.get_accel_data()
+        accel_data = mpu.get_accel_data(apply_bias=True)
         # print(accel_data['x'])
         # print(accel_data['y'])
         # print(accel_data['z'])
-        gyro_data = mpu.get_gyro_data()
+        gyro_data = mpu.get_gyro_data(apply_bias=True)
         # print(gyro_data['x'])
         # print(gyro_data['y'])
         # print(gyro_data['z'])

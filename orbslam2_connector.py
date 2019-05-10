@@ -53,6 +53,7 @@ class OrbSlam2Connector:
 
 
     def get_pos(self, imgLR):
+        imgLR = cv2.resize(imgLR, (1280, 360), interpolation=cv2.INTER_AREA)
         assert imgLR.shape == (360, 1280, 3)
 
         ts = time.time() - self.start_time

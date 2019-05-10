@@ -14,11 +14,11 @@ class Notifier:
     # 远程通知延迟，发送通知后隔多长时间后再次发送通知，默认10分钟
     remote_warning_delay = 10 * 60
     # 开始录像后，在没有事件多长时间后停止，默认60s
-    stop_record_after_no_event_delay = 60
+    stop_record_after_no_event_delay = 15
 
     # 感兴趣截图控制，每当有设定事件触发，就会触发一次感兴趣截图，间隔 interest_capture_delay 秒后，才能再次触发
     _last_interest_capture_time = 0
-    interest_capture_delay = 15
+    interest_capture_delay = 25
 
     # 上一次通知相关事件的时间，这里用来减少重复通知的次数
     _last_notice_human_time = 0

@@ -27,7 +27,7 @@ class UltrasoundRanger:
             return None
         start_time = time.perf_counter()
         # 等待高电平结束
-        b = io.wait_for_edge(self.echo_pin, io.FALLING, timeout=self.max_delay*10)
+        b = io.wait_for_edge(self.echo_pin, io.FALLING, timeout=self.max_delay*5)
         if b is None:
             # 这不应该发生，检查你的连线
             # 太近也会发生这种情况
